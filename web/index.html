@@ -293,6 +293,7 @@ body.dz-auth .tabs,body.dz-auth .fab,body.dz-auth #sync,body.dz-auth .learnbtn{d
 .authbox a,.dzchk a{color:var(--yolk)}
 .autherr{color:#ffb4a3;font-size:13.5px;min-height:1px}
 .authnote{background:rgba(255,255,255,.12);border-radius:12px;padding:10px 12px;font-size:13.5px;line-height:1.45;margin-bottom:12px;text-align:left}
+.gbtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:12px 14px;border-radius:12px;border:1px solid #d5d9cf;background:#fff;color:#1f1f1f;font:600 15px inherit;cursor:pointer;margin:4px 0 2px}.gbtn:disabled{opacity:.6}.author{display:flex;align-items:center;gap:10px;margin:12px 0;color:rgba(255,255,255,.75);font-size:12px}.author:before,.author:after{content:"";flex:1;height:1px;background:currentColor;opacity:.3}
 .authlinks{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}.linkbtn{background:none;border:0;color:var(--yolk);font:600 13px inherit;padding:4px 0;cursor:pointer}
 </style>
 </head>
@@ -460,7 +461,7 @@ function defaultState() {
       custom: { p: 30, c: 40, f: 30 }, carbLimit: null, glp1: { on: false, drug: "wegovy", dose: "", day: 4, freq: "weekly", protein: true, floor: true }, fast: { on: false, plan: "16:8", start: "12:00", hours: 8, days: [1, 4], kcal: null }, maintEvery: 20, maintWeeks: 2, maintAuto: true, manualMode: "auto",
       ovr: {}, micro: {}, waterGoal: 8, myFoods: [], savedMeals: [], supps: [], measures: [], photos: [], checkins: [], useScaleBmr: false, aiTipAuto: false, hideWeight: false,
       health: { cond: [], condOther: [], meds: [], allergy: [], allergyOther: [], labs: [], notes: "", trackBP: false, trackGlu: false, gluUnit: "mg" }, eatBack: 50, stepGoal: 8000, weekMinGoal: 150, stepsCount: false,
-      ai: { provider: "claude", model: "", endpoint: "" }
+      ai: { provider: "gemini", model: "", endpoint: "" }
     },
     phase: { milestone: null, maintUntil: null, history: [] },
     weights: [],
@@ -770,12 +771,17 @@ async function initCloud() {
 
 /* ================= AI (built-in Claude, or the user's own) ================= */
 const AI_PROVIDERS = {
-  claude: { name: "Dietzy AI (built in)", needsKey: false },
-  openai: { name: "OpenAI (ChatGPT)", needsKey: true, model: "gpt-4.1-mini" },
-  anthropic: { name: "Anthropic (Claude API)", needsKey: true, model: "claude-sonnet-5-5" },
-  gemini: { name: "Google Gemini", needsKey: true, model: "gemini-2.5-flash" },
-  custom: { name: "Other (OpenAI-compatible URL)", needsKey: false, model: "llama3.2-vision" }
+  gemini: { name: "Google Gemini (free key)", needsKey: true, model: "gemini-flash-latest", keyUrl: "https://aistudio.google.com/apikey" },
+  openai: { name: "OpenAI (ChatGPT)", needsKey: true, model: "gpt-4.1-mini", keyUrl: "https://platform.openai.com/api-keys" },
+  anthropic: { name: "Anthropic (Claude)", needsKey: true, model: "claude-sonnet-5-5", keyUrl: "https://console.anthropic.com/settings/keys" },
+  custom: { name: "Other (OpenAI-compatible URL)", needsKey: false, model: "llama3.2-vision" },
+  claude: { name: "Dietzy AI (built in)", needsKey: false }
 };
+const builtInAI = () => (window.DIETZY_CONFIG || {}).builtInAI !== false;
+const aiChoices = () => Object.entries(AI_PROVIDERS).filter(([k]) => k !== "claude" || builtInAI());
+// Is the chosen AI ready to use? (built in always is; others need a key, except "Other")
+function aiConnected() { const prov = S.profile.ai.provider || "gemini"; if (prov === "claude") return builtInAI(); const P = AI_PROVIDERS[prov]; return !!P && (!P.needsKey || !!lsGet(LS_AIKEY)); }
+function aiMissingMsg(P) { return `Connect your AI first: Settings → AI. ${P && P.keyUrl ? `Paste your ${P.name.replace(" (free key)", "")} key there` : "Add your key there"}${P === AI_PROVIDERS.gemini ? " — Google gives you one free in about a minute" : ""}.${builtInAI() ? " Or choose Dietzy AI (built in)." : ""}`; }
 // Keep photos sent to the AI small (max 1600 px JPEG) — faster uploads and well under size limits.
 function shrinkForAI(blob) {
   return new Promise((res) => {
@@ -787,7 +793,7 @@ function shrinkForAI(blob) {
 }
 const blobToDataURL = b => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(b); });
 async function aiAsk(prompt, imageBlob) {
-  const ai = S.profile.ai, prov = ai.provider || "claude";
+  const ai = S.profile.ai, prov = (ai.provider === "claude" && !builtInAI()) ? "gemini" : (ai.provider || "gemini");
   if (prov === "claude") {
     if (!window.DZ || !DZ.user) throw new Error("Please sign in to use the AI.");
     const body = { mode: "ask", prompt };
@@ -798,7 +804,7 @@ async function aiAsk(prompt, imageBlob) {
     return await DZ.ai(body);
   }
   const P = AI_PROVIDERS[prov], key = lsGet(LS_AIKEY) || "", model = ai.model || P.model;
-  if (P.needsKey && !key) throw new Error(`Add your ${P.name} API key under Settings → AI.`);
+  if (P.needsKey && !key) throw new Error(aiMissingMsg(P));
   const dataUrl = imageBlob ? await blobToDataURL(imageBlob) : null;
   const mime = dataUrl ? dataUrl.slice(5, dataUrl.indexOf(";")) : "";
   const b64 = dataUrl ? dataUrl.split(",")[1] : "";
@@ -826,7 +832,7 @@ async function aiAsk(prompt, imageBlob) {
       return j.candidates[0].content.parts.map(x => x.text || "").join("");
     }
   } catch (e) {
-    if (e instanceof TypeError) throw new Error(`Couldn't reach ${P.name}. Check your internet connection and API key, or switch to "Dietzy AI (built in)" in Settings → AI.`);
+    if (e instanceof TypeError) throw new Error(`Couldn't reach ${P.name}. Check your internet connection and API key${builtInAI() ? `, or switch to "Dietzy AI (built in)" in Settings → AI` : ""}.`);
     throw e;
   }
   throw new Error("Unknown AI provider.");
@@ -1611,7 +1617,7 @@ function foldSummary(v, title) {
     if (has("fasting")) return typeof fastCfg === "function" && fastCfg().on ? fastLabel() : "Off";
     if (has("Activity")) return `${num(p.eatBack)}% of exercise added · ${num(p.stepGoal).toLocaleString()} steps`;
     if (has("Daily targets")) return `${targets().cal} cal · P ${targets().p} g`;
-    if (has("AI")) return (AI_PROVIDERS[p.ai.provider] || AI_PROVIDERS.claude).name;
+    if (has("AI")) return (AI_PROVIDERS[p.ai.provider] || AI_PROVIDERS.gemini).name;
     if (has("My foods")) return p.myFoods.length ? `${p.myFoods.length} saved` : "None saved";
     if (has("Your data")) return "Backup, import, erase";
   }
@@ -2784,7 +2790,7 @@ function tipCard(d) {
 
 /* ================= Chat with the AI coach ================= */
 async function aiChat(system, msgs, onText) {
-  const ai = S.profile.ai, prov = ai.provider || "claude";
+  const ai = S.profile.ai, prov = (ai.provider === "claude" && !builtInAI()) ? "gemini" : (ai.provider || "gemini");
   // Drop anything before the first user message; providers expect the user to speak first.
   while (msgs.length && msgs[0].role !== "user") msgs = msgs.slice(1);
   if (prov === "claude") {
@@ -2792,7 +2798,7 @@ async function aiChat(system, msgs, onText) {
     return await DZ.aiStream({ mode: "chat", system, messages: msgs.map(m => ({ role: m.role, text: m.text })) }, onText);
   }
   const P = AI_PROVIDERS[prov], key = lsGet(LS_AIKEY) || "", model = ai.model || P.model;
-  if (P.needsKey && !key) throw new Error(`Add your ${P.name} API key under Settings → AI.`);
+  if (P.needsKey && !key) throw new Error(aiMissingMsg(P));
   try {
     let res, j;
     if (prov === "openai" || prov === "custom") {
@@ -2812,7 +2818,7 @@ async function aiChat(system, msgs, onText) {
       return j.candidates[0].content.parts.map(x => x.text || "").join("");
     }
   } catch (e) {
-    if (e instanceof TypeError) throw new Error(`Couldn't reach ${P.name}. Check your internet connection and API key, or switch to "Dietzy AI (built in)" in Settings → AI.`);
+    if (e instanceof TypeError) throw new Error(`Couldn't reach ${P.name}. Check your internet connection and API key${builtInAI() ? `, or switch to "Dietzy AI (built in)" in Settings → AI` : ""}.`);
     throw e;
   }
   throw new Error("Unknown AI provider.");
@@ -3144,6 +3150,7 @@ function viewHome() {
   return `
   <div class="greet"><div><div class="small muted">${fmtDate(d, { weekday: "long", month: "long", day: "numeric" })}</div><h1>${greeting()[0]}${p.name ? ", " + esc(p.name) : ""} ${greeting()[1]}</h1></div>
     ${streak() > 1 ? `<span class="chip streak">🔥 ${streak()} days</span>` : ""}</div>
+  ${aiConnected() ? "" : `<div class="note" style="display:flex;align-items:center;gap:10px;margin:0 0 12px"><span style="flex:1">🤖 <b>Connect your AI</b> to scan meal photos and chat with your coach — free with Google Gemini.</span><button class="btn sm" data-act="ai-setup">Set up</button></div>`}
 
   <div class="hero">${AVO("art")}
     <div class="lbl">${m === "loss" ? (p.goal === "health" ? "❤️ " : "📉 ") : m === "goal" ? "🏆 " : m === "care" ? "🩺 " : m === "build" ? "💪 " : m === "recomp" ? "🔄 " : m === "keep" ? "⚖️ " : "🧘 "}${MODE_LABEL[m]}</div>
@@ -3374,7 +3381,7 @@ function drawCharts() {
 }
 
 function viewPrefs() {
-  const p = S.profile, t = targets(), ai = p.ai, P = AI_PROVIDERS[ai.provider] || AI_PROVIDERS.claude;
+  const p = S.profile, t = targets(), ai = p.ai, P = AI_PROVIDERS[ai.provider] || AI_PROVIDERS.gemini;
   const nf = (k, label, val, extra = "") => `<label class="f">${label}<input class="in" inputmode="decimal" data-k="${k}" value="${val ?? ""}" ${extra}></label>`;
   const ov = (k, label, auto) => `<label class="f">${label}<input class="in" inputmode="decimal" data-k="profile.ovr.${k}" data-type="num" placeholder="Auto: ${auto}" value="${p.ovr[k] || ""}"></label>`;
   return `
@@ -3458,13 +3465,15 @@ function viewPrefs() {
     <details style="margin-top:10px"><summary>Vitamin &amp; mineral targets</summary><div class="grid2" style="margin-top:8px">
       ${MICROS.map(mk => `<label class="f">${mk.label} (${mk.unit})<input class="in" inputmode="decimal" data-k="profile.micro.${mk.k}" data-type="num" placeholder="Auto: ${MICRO_DEF[p.sex === "male" ? "male" : "female"][mk.k]}" value="${p.micro[mk.k] || ""}"></label>`).join("")}</div></details></div>
 
-  <div class="card"><h2>AI</h2>
-    <label class="f">Which AI reads your meal photos<select class="in" data-k="profile.ai.provider">${Object.entries(AI_PROVIDERS).map(([k, v]) => `<option value="${k}" ${ai.provider === k ? "selected" : ""}>${v.name}</option>`).join("")}</select></label>
+  <div class="card nofold" id="ai-card"><h2>AI</h2>
+    ${aiConnected() ? "" : `<div class="note" style="margin-bottom:10px"><b>Connect your AI</b> to scan meal photos and chat with your coach. Easiest: Google Gemini — free, no card needed:<ol style="margin:6px 0 0 18px;padding:0"><li>Open <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> and sign in with Google.</li><li>Tap <b>Create API key</b> and copy it.</li><li>Paste it in the <b>API key</b> box below, then tap <b>Test AI connection</b>.</li></ol>${builtInAI() ? `<div style="margin-top:6px">Don't want to set one up? Pick <b>Dietzy AI (built in)</b> instead.</div>` : ""}</div>`}
+    <label class="f">Which AI reads your meal photos<select class="in" data-k="profile.ai.provider">${aiChoices().map(([k, v]) => `<option value="${k}" ${ai.provider === k ? "selected" : ""}>${v.name}</option>`).join("")}</select></label>
     ${ai.provider !== "claude" ? `
       ${ai.provider === "custom" ? `<label class="f" style="margin-top:10px">API base URL<input class="in" data-k="profile.ai.endpoint" placeholder="http://localhost:11434/v1" value="${esc(ai.endpoint)}"></label>` : ""}
       <label class="f" style="margin-top:10px">Model<input class="in" data-k="profile.ai.model" placeholder="${P.model || ""}" value="${esc(ai.model)}"></label>
+      ${P.keyUrl ? `<div class="tiny muted" style="margin-top:6px">Get a key: <a href="${P.keyUrl}" target="_blank" rel="noopener">${P.keyUrl.replace("https://", "")}</a>${ai.provider === "gemini" ? " (free)" : " (billed by that company, separate from a ChatGPT/Claude subscription)"}</div>` : ""}
       <label class="f" style="margin-top:10px">API key ${P.needsKey ? "" : "(optional)"}<input class="in" type="password" autocomplete="off" data-k="aikey" placeholder="Paste your key" value="${esc(lsGet(LS_AIKEY) || "")}"></label>
-      <div class="note" style="margin-top:10px">Your key is kept only on this device — never in your synced data — and your requests go straight from this device to that AI company.</div>`
+      <div class="note" style="margin-top:10px">Your key is kept only on this device — never in your synced data — and your requests go straight from this device to that AI company. Signing out removes it, so keep a copy.</div>`
       : `<div class="note" style="margin-top:10px">Uses Dietzy's built-in AI — no key needed. There's a daily allowance for photo scans and messages.</div>`}
     <button class="btn sm" style="margin-top:10px" data-act="test-ai">Test AI connection</button> <span id="aiTest" class="small muted"></span></div>
 
@@ -3872,6 +3881,7 @@ document.addEventListener("click", async e => {
   const a = el.dataset.act;
   switch (a) {
     case "fast-day": { const i = +el.dataset.i, ds = (S.profile.fast.days = (S.profile.fast.days || []).slice()), j = ds.indexOf(i); if (j >= 0) ds.splice(j, 1); else { ds.push(i); if (ds.length > 2) ds.shift(); } ds.sort(); save(["profile"]); render(); if (ds.length === 2 && (Math.abs(ds[0] - ds[1]) === 1 || Math.abs(ds[0] - ds[1]) === 6)) toast("Tip: fast days work best with a regular day in between."); break; }
+    case "ai-setup": location.hash = "#prefs"; setTimeout(() => { const c = $("#ai-card"); if (c) c.scrollIntoView({ behavior: "smooth", block: "start" }); }, 80); break;
     case "fast-settings": setFold("prefs:⏱️ Intermittent fasting", true); location.hash = "#prefs"; setTimeout(() => { const c = $("#fastset"); if (c) c.scrollIntoView({ behavior: "smooth", block: "start" }); }, 80); break;
     case "dz-signout": dzSignOut(); break;
     case "dz-pass": dzChangePassword(); break;
@@ -4004,6 +4014,7 @@ function dzAuthShell(inner) {
 function dzShowAuth(mode = "in", note = "") {
   const tabs = `<div class="seg authseg"><button class="${mode === "in" ? "on" : ""}" data-m="in">Sign in</button><button class="${mode === "up" ? "on" : ""}" data-m="up">Create account</button></div>`;
   const msg = note ? `<div class="authnote">${note}</div>` : "";
+  const gbtn = DZ_CFG.googleSignIn ? `<button type="button" class="gbtn" id="au-google"><svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg><span>Continue with Google</span></button><div class="author"><span>or use email</span></div>` : "";
   const form = mode === "up" ? `
     <form id="authf" class="authform" novalidate>
       <label class="f">Email<input class="in" id="au-email" type="email" autocomplete="email" required></label>
@@ -4019,9 +4030,11 @@ function dzShowAuth(mode = "in", note = "") {
       <label class="f">Password<input class="in" id="au-pass" type="password" autocomplete="current-password" required></label>
       <div id="au-err" class="autherr"></div>
       <button class="btn" type="submit" id="au-go">Sign in</button>
-      <div class="authlinks"><button type="button" class="linkbtn" id="au-forgot">Forgot password?</button><button type="button" class="linkbtn" id="au-magic">Email me a sign-in link</button></div>
+      ${DZ_CFG.emailEnabled ? `<div class="authlinks"><button type="button" class="linkbtn" id="au-forgot">Forgot password?</button><button type="button" class="linkbtn" id="au-magic">Email me a sign-in link</button></div>` : `<div class="tiny" style="text-align:center;color:rgba(255,255,255,.75)">Forgot your password? Email <a href="mailto:${esc(DZ_CFG.supportEmail || "")}">${esc(DZ_CFG.supportEmail || "support")}</a>.</div>`}
     </form>`;
-  dzAuthShell(tabs + msg + form);
+  const gnote = DZ_CFG.googleSignIn && mode === "up" ? `<div class="tiny" style="text-align:center;margin:-4px 0 10px;color:rgba(255,255,255,.75)">With Google, you'll confirm the terms on the next screen.</div>` : "";
+  dzAuthShell(tabs + msg + gbtn + gnote + form);
+  const gb = $("#au-google"); if (gb) gb.onclick = async () => { err(""); gb.disabled = true; gb.querySelector("span").textContent = "Opening Google…"; try { await DZ.google(); } catch (e) { err(e.message); gb.disabled = false; gb.querySelector("span").textContent = "Continue with Google"; } };
   $$(".authseg button").forEach(b => b.onclick = () => dzShowAuth(b.dataset.m));
   const err = t => { $("#au-err").textContent = t || ""; };
   $$("#authf input").forEach(i => i.addEventListener("input", () => err("")));
@@ -4062,6 +4075,7 @@ let dzStarted = false;
 async function dzSignedIn() {
   const u = DZ.user; if (!u) return dzShowAuth();
   if (dzStarted && dzSignedIn._uid === u.id) return; // already running for this account (sign-in events can repeat)
+  if (dzConsentGate.open === u.id) return; // consent screen already showing for this account
   dzSignedIn._uid = u.id;
   // This device's saved data belongs to one account at a time.
   const last = lsGet("dz-user");
@@ -4069,25 +4083,44 @@ async function dzSignedIn() {
   lsSet("dz-user", u.id);
   document.body.classList.remove("dz-auth");
   if (location.hash && /access_token|type=|error_description/.test(location.hash)) history.replaceState(null, "", location.pathname);
+  // Nobody uses Dietzy without agreeing to the current Terms, Privacy Policy and health-data consent
+  // (Google sign-ups skip the sign-up checkboxes, and the terms can change).
+  const c = (u.user_metadata || {}).consents;
+  if (DZ_CFG.termsVersion && (!c || c.version !== DZ_CFG.termsVersion)) { dzStarted = false; return dzConsentGate(!!c); }
   if (!dzStarted) { dzStarted = true; route(); } else render();
   initCloud();
   DZ.recordConsents().catch(() => {});
-  const c = (u.user_metadata || {}).consents;
-  if (DZ_CFG.termsVersion && (!c || c.version !== DZ_CFG.termsVersion)) setTimeout(dzReaccept, 600);
 }
-function dzReaccept() {
-  openSheet("Updated terms", `<div class="small">We've updated Dietzy's <a href="${LEGAL.terms}" target="_blank" rel="noopener">Terms of Use</a> and <a href="${LEGAL.privacy}" target="_blank" rel="noopener">Privacy Policy</a>. Please review and accept to keep using Dietzy.</div>
-    <label class="dzchk" style="margin-top:12px"><input type="checkbox" id="ra-ok"><span>I agree, I'm 18 or older, and I consent to Dietzy using my health information as described.</span></label>
-    <button class="btn primary block" style="margin-top:12px" id="ra-go">Accept</button>`, () => {
-      $("#ra-go").onclick = async () => { if (!$("#ra-ok").checked) return toast("Tick the box to continue."); try { await DZ.acceptCurrentTerms(DZ_CFG.termsVersion); closeSheet(); toast("Thanks!"); } catch { toast("Couldn't save — try again."); } };
-    });
+function dzConsentGate(updated) {
+  const u = DZ.user;
+  dzConsentGate.open = u && u.id;
+  dzAuthShell(`<div class="authform">
+    <div class="small" style="text-align:center;margin:6px 0 4px">${updated ? "We've updated Dietzy's Terms of Use and Privacy Policy. Please review and accept to keep using Dietzy." : `Welcome${u && u.email ? ", <b>" + esc(u.email) + "</b>" : ""}! One last step before you start.`}</div>
+    <label class="dzchk"><input type="checkbox" id="au-18"><span>I'm 18 or older.</span></label>
+    <label class="dzchk"><input type="checkbox" id="au-terms"><span>I agree to the <a href="${LEGAL.terms}" target="_blank" rel="noopener">Terms of Use</a> and <a href="${LEGAL.privacy}" target="_blank" rel="noopener">Privacy Policy</a>, and I understand Dietzy is for education only and I'll check with my doctor before making health changes.</span></label>
+    <label class="dzchk"><input type="checkbox" id="au-health"><span>I consent to Dietzy collecting and using my health information (like weight, food, conditions, medications and test results) to run the app for me, as described in the Privacy Policy. Dietzy does not sell it.</span></label>
+    <div id="au-err" class="autherr"></div>
+    <button class="btn" type="button" id="au-go">${updated ? "Accept and continue" : "I'm committed — let's go"}</button>
+    <div style="text-align:center"><button type="button" class="linkbtn" id="au-out">Not you? Sign out</button></div>
+  </div>`);
+  const err = t => { $("#au-err").textContent = t || ""; };
+  $$(".authform input").forEach(i => i.addEventListener("change", () => err("")));
+  $("#au-out").onclick = () => dzSignOut();
+  $("#au-go").onclick = async () => {
+    if (!$("#au-18").checked) return err("You need to be 18 or older to use Dietzy.");
+    if (!$("#au-terms").checked) return err("Please agree to the Terms of Use and Privacy Policy.");
+    if (!$("#au-health").checked) return err("Dietzy needs your consent to store your health information to work.");
+    const g = $("#au-go"); g.disabled = true; g.textContent = "Saving…";
+    try { await DZ.acceptCurrentTerms(DZ_CFG.termsVersion); dzConsentGate.open = null; dzSignedIn._uid = null; dzSignedIn(); }
+    catch (e) { err("Couldn't save that — check your connection and try again."); g.disabled = false; g.textContent = "Try again"; }
+  };
 }
 async function dzBoot() {
   if (!window.DZ || !DZ.ready) return dzSetupNeeded();
   DZ.onAuth((event) => {
     if (event === "PASSWORD_RECOVERY") setTimeout(() => dzChangePassword(true), 300);
     if (event === "SIGNED_IN" && !dzStarted) dzSignedIn();
-    if (event === "SIGNED_OUT") { dzStarted = false; dzSignedIn._uid = null; }
+    if (event === "SIGNED_OUT") { dzStarted = false; dzSignedIn._uid = null; dzConsentGate.open = null; }
   });
   let s = null;
   try { s = await DZ.init(); } catch {}
