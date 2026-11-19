@@ -111,6 +111,13 @@
       session = data.session; // null when email confirmation is required
       return data;
     },
+    async google() {
+      const { error } = await sb.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: location.origin + location.pathname },
+      });
+      if (error) throw new Error(friendly(error));
+    },
     async magicLink(email) {
       const { error } = await sb.auth.signInWithOtp({
         email,
@@ -151,7 +158,9 @@
     async acceptCurrentTerms(version) {
       if (!session) return;
       const at = new Date().toISOString();
-      await sb.auth.updateUser({ data: { consents: { version, at, terms: true, privacy: true, health_data: true, age_18: true } } });
+      const { data: upd, error: ue } = await sb.auth.updateUser({ data: { consents: { version, at, terms: true, privacy: true, health_data: true, age_18: true } } });
+      if (ue) throw new Error(friendly(ue));
+      if (upd && upd.user) session.user = upd.user;
       await sb.from("consents").insert(["terms", "privacy", "health_data", "age_18"].map((k) => ({ user_id: session.user.id, kind: k, version, accepted_at: at })));
     },
     // AI through the server function.
