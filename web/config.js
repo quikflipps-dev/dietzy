@@ -5,7 +5,7 @@
 window.DIETZY_CONFIG = {
   supabaseUrl: "https://jiwqyslxgrsynfirbjkj.supabase.co",      // e.g. "https://abcd1234.supabase.co"
   supabaseAnonKey: "sb_publishable_Au-nXE1h4LBUFqjUH6qxQA_SvAseLhF",  // publishable (public) key - safe to be here
-  googleSignIn: false,  // true shows "Continue with Google" (turn on Google in Supabase first)
+  googleSignIn: true,  // true shows "Continue with Google" (turn on Google in Supabase first)
   builtInAI: true,      // offer "Dietzy AI (built in)" (paid by you, with daily limits). New users start on their own AI either way.
   emailEnabled: false,  // false = never send emails (no "forgot password" / "email me a link") until an email service is connected
   supportEmail: "quikflipps@gmail.com",
