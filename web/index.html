@@ -15,6 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="format-detection" content="telephone=no">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="i18n.js"></script>
 <script src="config.js"></script>
 <script src="backend.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -294,6 +295,7 @@ input.big-in{font-size:22px;font-weight:700;font-family:var(--display)}
 .chatbar .btn{height:44px;width:48px;flex:none;font-size:18px}
 .hero .eye{background:rgba(255,255,255,.12);color:var(--hero-ink);border:0;margin-left:auto;margin-right:6px;padding:7px 9px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.langpick{display:flex;justify-content:center;gap:6px;margin:4px 0 10px}.langpick button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600;cursor:pointer}.langpick button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
 .btn.ezbtn{margin:-2px 0 12px;background:var(--yolk);color:#2b1d00;border:0;font-weight:800;font-size:15px;padding:13px;box-shadow:0 4px 14px rgba(243,181,47,.35)}.btn.ezbtn span{font-weight:600;opacity:.75}
 
 body.dz-auth .tabs,body.dz-auth .fab,body.dz-auth #sync,body.dz-auth .learnbtn,body.dz-auth .setbtn{display:none!important}
@@ -311,7 +313,7 @@ body.dz-auth .tabs,body.dz-auth .fab,body.dz-auth #sync,body.dz-auth .learnbtn,b
 <body>
 <div class="app">
   <header class="top">
-    <div class="brand"><svg class="logo" viewBox="0 0 120 120" aria-hidden="true"><rect x="4" y="4" width="112" height="112" rx="32" fill="#2f6b3c"/><path d="M35 37H85L37 83H85" fill="none" stroke="#cfe39a" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/><circle cx="85" cy="83" r="10" fill="#f3b52f"/></svg><span>Diet<span>zy</span></span></div>
+    <div class="brand" data-notr><svg class="logo" viewBox="0 0 120 120" aria-hidden="true"><rect x="4" y="4" width="112" height="112" rx="32" fill="#2f6b3c"/><path d="M35 37H85L37 83H85" fill="none" stroke="#cfe39a" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/><circle cx="85" cy="83" r="10" fill="#f3b52f"/></svg><span>Diet<span>zy</span></span></div>
     <div class="row" style="gap:10px"><div id="sync" class="sync"><i></i><span>Saved on this device</span></div><button class="iconbtn" id="profChip" data-act="profiles" aria-label="Switch profile" hidden></button><button class="iconbtn learnbtn" data-act="learn" aria-label="Learn — how Dietzy works">📚</button><a class="iconbtn learnbtn setbtn" id="setBtn" href="#prefs" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></a></div>
   </header>
   <main id="view"></main>
@@ -334,7 +336,7 @@ const todayStr = () => ymd(new Date());
 const parseD = s => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
 const addDays = (s, n) => { const d = parseD(s); d.setDate(d.getDate() + n); return ymd(d); };
 const daysBetween = (a, b) => Math.round((parseD(b) - parseD(a)) / 86400000);
-const fmtDate = (s, opt = { weekday: "short", month: "short", day: "numeric" }) => parseD(s).toLocaleDateString(undefined, opt);
+const fmtDate = (s, opt = { weekday: "short", month: "short", day: "numeric" }) => parseD(s).toLocaleDateString(window.dzLocale ? dzLocale() : undefined, opt);
 const r0 = n => Math.round(n || 0);
 const r1 = n => Math.round((n || 0) * 10) / 10;
 const num = v => { const n = parseFloat(v); return isFinite(n) ? n : 0; };
@@ -805,6 +807,7 @@ function shrinkForAI(blob) {
 }
 const blobToDataURL = b => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(b); });
 async function aiAsk(prompt, imageBlob) {
+  prompt = String(prompt) + (window.dzAiLangNote ? dzAiLangNote() : "");
   const ai = S.profile.ai, prov = (ai.provider === "claude" && !builtInAI()) ? "gemini" : (ai.provider || "gemini");
   if (prov === "claude") {
     if (!window.DZ || !DZ.user) throw new Error("Please sign in to use the AI.");
@@ -1008,7 +1011,7 @@ function fastWindow(now = new Date()) {
   }
   return { eating: false, open: nextOpen, close: prevClose };
 }
-const fmtT = dt => dt.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+const fmtT = dt => dt.toLocaleTimeString(window.dzLocale ? dzLocale() : [], { hour: "numeric", minute: "2-digit" });
 const fmtDur = ms => { const mins = Math.max(0, Math.floor(ms / 60000)), h = Math.floor(mins / 60), m = mins % 60; return h ? `${h}h ${String(m).padStart(2, "0")}m` : `${m}m`; };
 /* Foods logged for today keep the time they were logged; ones logged outside the window get a gentle tag. */
 function fastFlag(f) { return f.at && fastOn() && !fastPlan().week && !fastWindow(new Date(f.at)).eating ? "🌙 Logged during fast" : ""; }
@@ -1463,7 +1466,7 @@ const gluShow = mg => gluMmol() ? r1(mg / 18.016).toFixed(1) : String(r0(mg));
 const gluUnit = () => gluMmol() ? "mmol/L" : "mg/dL";
 const gluIn = v => gluMmol() ? num(v) * 18.016 : num(v);
 const nowLocal = () => { const d = new Date(); return `${ymd(d)}T${pad(d.getHours())}:${pad(d.getMinutes())}`; };
-const fmtTime = t => { const [h, m] = (t.split("T")[1] || "00:00").split(":").map(Number); return new Date(2000, 0, 1, h, m).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }); };
+const fmtTime = t => { const [h, m] = (t.split("T")[1] || "00:00").split(":").map(Number); return new Date(2000, 0, 1, h, m).toLocaleTimeString(window.dzLocale ? dzLocale() : [], { hour: "numeric", minute: "2-digit" }); };
 function allReadings(type, since) {
   const out = [];
   for (const d of Object.keys(S.days).sort()) { if (since && d < since) continue; for (const r of (S.days[d].readings || [])) if (!type || r.type === type) out.push(r); }
@@ -2581,7 +2584,7 @@ function doctorReport(days) {
   const hx = `<table>${row("Conditions", conds.length ? conds.map(esc).join(", ") : "none recorded")}${row("Medicines", meds.length ? meds.join("; ") : "none recorded")}${row("GLP-1 medicine", g1s || null)}${row("Supplements", sp.length ? sp.join("<br>") : null)}${row("Allergies", allergies.length ? allergies.map(esc).join(", ") : null)}</table>`;
   const due = checkupPlan().filter(it => !/Up to date/.test(it.status[0]));
   const ask = due.length ? `<ul>${due.map(it => `<li>${esc(it.name)} — ${it.last ? "last " + esc(it.last) : "no result on file"} (${esc(it.status[0])})</li>`).join("")}</ul>` : "";
-  return `<div class="rpt"><header><div><h3>Health summary</h3><div class="rsm">${esc(p.name || "Dietzy user")} · ${p.sex === "male" ? "Male" : "Female"}${age ? `, ${age}` : ""} · ${ftin} (${r0(p.heightIn * 2.54)} cm)</div></div><div class="rsm" style="text-align:right">${fmtDate(since, { month: "short", day: "numeric", year: "numeric" })} – ${fmtDate(today, { month: "short", day: "numeric", year: "numeric" })}<br>${days} days</div></header>
+  return `<div class="rpt"><header><div><h3>Health summary</h3><div class="rsm"><span data-notr>${esc(p.name || "Dietzy user")}</span> · <span>${p.sex === "male" ? "Male" : "Female"}</span>${age ? `, ${age}` : ""} · ${ftin} (${r0(p.heightIn * 2.54)} cm)</div></div><div class="rsm" style="text-align:right">${fmtDate(since, { month: "short", day: "numeric", year: "numeric" })} – ${fmtDate(today, { month: "short", day: "numeric", year: "numeric" })}<br>${days} days</div></header>
     ${sec("Weight", weight)}${sec("Plan", plan)}${sec(`Blood pressure (home readings)`, bpT)}${sec("Blood sugar (home readings)", glT)}${sec("Lab results", labs)}${sec("Health history", hx)}${sec("Nutrition (fully logged days)", nutr)}${sec("Activity", act)}${sec("Tests I'd like to ask about", ask)}
     ${rptNote ? `<section><h4>My questions / notes</h4><p>${esc(rptNote).replace(/\n/g, "<br>")}</p></section>` : ""}
     <footer>Made with Dietzy from self-recorded data (home readings, food log, scale). Not a medical record; values were not verified by a clinician.</footer></div>`;
@@ -2779,7 +2782,7 @@ function dayContext(d) {
   const trend = (tc != null && ws.length > 2 ? `smoothed trend ${r1(trendOn(d))} lb, ${r1(tc)} lb over the last 7 days` : wk.length > 1 ? `${r1(wk[wk.length - 1].w - wk[0].w)} lb over the last week` : "not enough weigh-ins this week") + (ad ? `; learned maintenance burn ≈ ${r0(ad.est)} kcal/day from ${ad.days} logged days` : "") + (measures().length ? `; latest waist ${r1((measures().filter(x => x.waist != null).slice(-1)[0] || {}).waist || 0)} in` : "");
   return `Person: ${p.sex}, age ${p.age}, ${r0(p.heightIn)} in tall, weighs ${r1(latestW())} lb, goal ${p.goalWeight || "not set"} lb. Weight trend: ${trend}.
 Goal: ${GOALS[goalOf()].name} — ${GOALS[goalOf()].how}
-Diet style: ${dietOf().name} — ${dietOf().note}${dietOf().carbG ? ` Net carb limit: ${num(p.carbLimit) || dietOf().carbG} g.` : ""} Only suggest foods that fit this diet. Phase: ${MODE_LABEL[t.mode]}. Local time: ${new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}. ${fastContext(d)}
+Diet style: ${dietOf().name} — ${dietOf().note}${dietOf().carbG ? ` Net carb limit: ${num(p.carbLimit) || dietOf().carbG} g.` : ""} Only suggest foods that fit this diet. Phase: ${MODE_LABEL[t.mode]}. Local time: ${new Date().toLocaleTimeString(window.dzLocale ? dzLocale() : [], { hour: "numeric", minute: "2-digit" })}. ${fastContext(d)}
 Today's goals: ${calGoal(d)} kcal (includes ${bonus(d)} kcal earned from exercise), protein ${t.p} g, carbs ${t.c} g, fat ${t.f} g, fiber ${t.fib} g, sodium under ${t.na} mg.
 Eaten so far: ${r0(tot.cal)} kcal, protein ${r0(tot.p)} g, carbs ${r0(tot.c)} g, fat ${r0(tot.f)} g, fiber ${r0(tot.fib)} g, sodium ${r0(tot.na)} mg. Foods: ${foods}.
 Vitamin/mineral progress (% of goal): ${gaps}. Leucine ${r1(tot.b.leu)}/${t.bcaa.leu} g.
@@ -2820,11 +2823,12 @@ function tipCard(d) {
   return `<div class="card tip" data-fold="home:tips" data-sum="${esc(tip ? tip.text.slice(0, 90) + (tip.text.length > 90 ? "…" : "") : "Tap to see today's tips")}"><div class="row between"><h2 style="margin:0">🤖 Today's tips</h2><button class="btn sm ${tip ? "ghost" : "primary"}" data-act="tip" ${tipBusy ? "disabled" : ""}>${tip ? "↻ Refresh" : "✨ Get AI tips"}</button></div>
     <div style="margin-top:10px">${body}</div>
     ${tip ? `<button class="btn sm ghost" style="margin-top:10px" data-act="tip-ask">💬 Ask a follow-up</button>` : ""}
-    <div class="tiny muted" style="margin-top:8px">${tip ? `Updated ${new Date(tip.at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })} · ` : ""}Based on your food, activity, goals${hasHealthInfo() ? " and health info" : ""}. Not medical advice.</div></div>`;
+    <div class="tiny muted" style="margin-top:8px">${tip ? `Updated ${new Date(tip.at).toLocaleTimeString(window.dzLocale ? dzLocale() : [], { hour: "numeric", minute: "2-digit" })} · ` : ""}Based on your food, activity, goals${hasHealthInfo() ? " and health info" : ""}. Not medical advice.</div></div>`;
 }
 
 /* ================= Chat with the AI coach ================= */
 async function aiChat(system, msgs, onText) {
+  system = String(system || "") + (window.dzAiLangNote ? dzAiLangNote() : "");
   const ai = S.profile.ai, prov = (ai.provider === "claude" && !builtInAI()) ? "gemini" : (ai.provider || "gemini");
   // Drop anything before the first user message; providers expect the user to speak first.
   while (msgs.length && msgs[0].role !== "user") msgs = msgs.slice(1);
@@ -2877,7 +2881,7 @@ Weigh-ins (most recent last): ${sortedWeights().slice(-8).map(w => `${w.d} ${r1(
 
 LOGGING FOOD: you can add food to their log. Only when they clearly ask you to log, add or track something they ate or are eating (e.g. "log 2 eggs and toast for breakfast"), reply with one short sentence, then on its own line write exactly:
 <log meal="Breakfast">2 large eggs scrambled in butter; 1 slice whole wheat toast</log>
-meal must be Breakfast, Lunch, Dinner or Snack — use what they said, otherwise go by the time (it's ${new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })} now). Inside the tag, list every item with its amount, as they described it. Dietzy works out the nutrition and shows them a card to confirm, so don't list calories yourself. Never use the tag otherwise.`;
+meal must be Breakfast, Lunch, Dinner or Snack — use what they said, otherwise go by the time (it's ${new Date().toLocaleTimeString(window.dzLocale ? dzLocale() : [], { hour: "numeric", minute: "2-digit" })} now). Inside the tag, list every item with its amount, as they described it. Dietzy works out the nutrition and shows them a card to confirm, so don't list calories yourself. Never use the tag otherwise.`;
 }
 const CHAT_MEALS = ["Breakfast", "Lunch", "Dinner", "Snack"];
 function chatCard(m, i) {
@@ -3198,7 +3202,7 @@ function viewHome() {
   }
   const sug = suggestions(d);
   return `
-  <div class="greet"><div><div class="small muted">${fmtDate(d, { weekday: "long", month: "long", day: "numeric" })}</div><h1>${greeting()[0]}${p.name ? ", " + esc(p.name) : ""} ${greeting()[1]}</h1></div>
+  <div class="greet"><div><div class="small muted">${fmtDate(d, { weekday: "long", month: "long", day: "numeric" })}</div><h1><span>${greeting()[0]}</span>${p.name ? `, <span data-notr>${esc(p.name)}</span>` : ""} ${greeting()[1]}</h1></div>
     ${streak() > 1 ? `<span class="chip streak">🔥 ${streak()} days</span>` : ""}</div>
   ${aiConnected() ? "" : `<div class="note" style="display:flex;align-items:center;gap:10px;margin:0 0 12px"><span style="flex:1">🤖 <b>Connect your AI</b> to scan meal photos and chat with your coach — free with Google Gemini.</span><button class="btn sm" data-act="ai-setup">Set up</button></div>`}
 
@@ -3436,6 +3440,7 @@ function viewPrefs() {
   const ov = (k, label, auto) => `<label class="f">${label}<input class="in" inputmode="decimal" data-k="profile.ovr.${k}" data-type="num" placeholder="Auto: ${auto}" value="${p.ovr[k] || ""}"></label>`;
   return `
   ${accountCard()}
+  ${langCard()}
   <div class="card row between" data-act="learn" style="cursor:pointer"><div><h2 style="margin:0">📚 Learn</h2><div class="small muted">PDCAAS, diets compared, macros, ranges and more</div></div>${ICON.right}</div>
   <div class="card row between" data-act="sub" data-v="health" style="cursor:pointer"><div><h2 style="margin:0">🩺 Health &amp; test results</h2><div class="small muted">Conditions, medications, allergies and lab results</div></div>${ICON.right}</div>
   <div class="card"><h2>Profile</h2>
@@ -4057,9 +4062,18 @@ function dzWipeDevice() {
   // Everything Dietzy keeps on this device (logs, settings, photos cache, your own AI key). The sign-in itself is handled by Supabase.
   try { Object.keys(localStorage).filter(k => /^(trimline-|ketofy-|dz-)/.test(k)).forEach(k => localStorage.removeItem(k)); } catch {}
 }
+// Language buttons (names stay in their own language, never translated).
+function langPicker() {
+  if (!window.dzLangs) return "";
+  return `<div class="langpick" data-notr>${Object.entries(dzLangs).map(([k, v]) => `<button type="button" class="${dzLang() === k ? "on" : ""}" onclick="dzSetLang('${k}')">${v}</button>`).join("")}</div>`;
+}
+function langCard() {
+  if (!window.dzLangs) return "";
+  return `<div class="card nofold"><h2>🌐 Language</h2>${langPicker()}<div class="tiny muted" style="margin-top:8px">Changes the app and your AI coach's replies. Your logged foods keep the names you gave them.</div></div>`;
+}
 function dzAuthShell(inner) {
   document.body.classList.add("dz-auth");
-  $("#view").innerHTML = `<div class="welcome authbox">${AVO("art")}<h1>Dieting made easy.</h1>${inner}</div>
+  $("#view").innerHTML = `${langPicker()}<div class="welcome authbox">${AVO("art")}<h1>Dieting made easy.</h1>${inner}</div>
     <div class="tiny muted" style="text-align:center;margin:10px 0 30px">Dietzy is for education only — not medical advice. <a href="${LEGAL.terms}" target="_blank" rel="noopener">Terms</a> · <a href="${LEGAL.privacy}" target="_blank" rel="noopener">Privacy</a></div>`;
 }
 function dzShowAuth(mode = "in", note = "") {
