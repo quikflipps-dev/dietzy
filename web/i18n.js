@@ -18,7 +18,7 @@
   }
   document.documentElement.lang = lang;
   // Load only the dictionary for the chosen language (runs while the page is still loading, so it's ready before the app draws).
-  if (lang !== "en") document.write('<script src="i18n-' + lang + '.js?v=1"><\/script>');
+  if (lang !== "en") document.write('<script src="i18n-' + lang + '.js?v=3"><\/script>');
 
   const NUM = /\d[\d,]*(?:\.\d+)?/g;
   function form(n, forms) {
