@@ -317,6 +317,98 @@ body.dz-auth .tabs,body.dz-auth .fab,body.dz-auth #sync,body.dz-auth .learnbtn,b
 .authnote{background:rgba(255,255,255,.12);border-radius:12px;padding:10px 12px;font-size:13.5px;line-height:1.45;margin-bottom:12px;text-align:left}
 .gbtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:12px 14px;border-radius:12px;border:1px solid #d5d9cf;background:#fff;color:#1f1f1f;font:600 15px inherit;cursor:pointer;margin:4px 0 2px}.gbtn:disabled{opacity:.6}.author{display:flex;align-items:center;gap:10px;margin:12px 0;color:rgba(255,255,255,.75);font-size:12px}.author:before,.author:after{content:"";flex:1;height:1px;background:currentColor;opacity:.3}
 .authlinks{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}.linkbtn{background:none;border:0;color:var(--yolk);font:600 13px inherit;padding:4px 0;cursor:pointer}
+
+/* ================= Looks: color themes (html[data-theme]) + home designs (html[data-layout]) =================
+   No data-theme = the original Dietzy green, which still follows the phone's dark mode.
+   A chosen theme sets every color itself, so it looks the same in light and dark mode. */
+html[data-theme]{--shadow:none;--cam-ink:#fff}
+html[data-theme="red"]{--bg:#F0EADC;--card:#FAF6EE;--ink:#2A1A17;--muted:#6B5A52;--line:#E3DACA;--soft:#E8DFCF;--accent:#B3261E;--accent-ink:#FFF8EE;--accent-soft:#F6E3DF;--hero:#B3261E;--hero-ink:#FFF8EE;--flesh:#F2C9A8;--yolk:#F2B441;--pit:#6B5A52;--warn:#8F1D12;--warn-soft:#F6DCD6;--good:#2F7A45;--p:#B3261E;--c:#C9A27A;--f:#2A1A17;--maint:#2A6F83;--maint-soft:#DCEBEF;--cam-bg:#B3261E;color-scheme:light}
+html[data-theme="green"]{--bg:#F0EADC;--card:#FAF6EE;--ink:#1E2A24;--muted:#5E665F;--line:#E3DACA;--soft:#E8DFCF;--accent:#1F5C46;--accent-ink:#FFF8EE;--accent-soft:#DCEADF;--hero:#1F5C46;--hero-ink:#FFF8EE;--flesh:#F4B9A9;--yolk:#E0644A;--pit:#5E665F;--warn:#B3261E;--warn-soft:#F6DCD6;--good:#1F7A45;--p:#E0644A;--c:#D9A441;--f:#1F5C46;--maint:#2A6F83;--maint-soft:#DCEBEF;--cam-bg:#E0644A;color-scheme:light}
+html[data-theme="terracotta"]{--bg:#F0EADC;--card:#FAF6EE;--ink:#2A1A17;--muted:#6B5A52;--line:#E3DACA;--soft:#E8DFCF;--accent:#B0472F;--accent-ink:#FFF8EE;--accent-soft:#F7E2D9;--hero:#B0472F;--hero-ink:#FFF8EE;--flesh:#F2C9A8;--yolk:#E9B36A;--pit:#6B5A52;--warn:#8F1D12;--warn-soft:#F6DCD6;--good:#2F7A45;--p:#B0472F;--c:#D9A441;--f:#5E4A3F;--maint:#2A6F83;--maint-soft:#DCEBEF;--cam-bg:#B0472F;color-scheme:light}
+html[data-theme="navy"]{--bg:#F0EADC;--card:#FAF6EE;--ink:#1B2233;--muted:#5C6170;--line:#E3DACA;--soft:#E8DFCF;--accent:#1E2A44;--accent-ink:#FFF8EE;--accent-soft:#DDE2EC;--hero:#1E2A44;--hero-ink:#FFF8EE;--flesh:#F7C08A;--yolk:#F28C28;--pit:#5C6170;--warn:#B3261E;--warn-soft:#F6DCD6;--good:#2F7A45;--p:#F28C28;--c:#E8C25A;--f:#1E2A44;--maint:#2A6F83;--maint-soft:#DCEBEF;--cam-bg:#F28C28;--cam-ink:#1E2A44;color-scheme:light}
+html[data-theme="midnight"]{--bg:#101214;--card:#1B1E22;--ink:#F2F4F0;--muted:#9BA3A0;--line:#2A2F35;--soft:#24282D;--accent:#C6F24E;--accent-ink:#101214;--accent-soft:#2C3518;--hero:#1B1E22;--hero-ink:#F2F4F0;--flesh:#C6F24E;--yolk:#C6F24E;--pit:#9BA3A0;--warn:#FF8A6B;--warn-soft:#3A2219;--good:#7FE08A;--p:#C6F24E;--c:#7FD1C7;--f:#F2F4F0;--maint:#7FD1C7;--maint-soft:#173236;--cam-bg:#C6F24E;--cam-ink:#101214;--display:"Sora",system-ui,sans-serif;color-scheme:dark}
+html[data-theme="cobalt"]{--bg:#F7F9FC;--card:#FFFFFF;--ink:#0F172A;--muted:#64748B;--line:#E2E8F0;--soft:#EEF2F7;--accent:#2F5BEA;--accent-ink:#FFFFFF;--accent-soft:#E3EAFD;--hero:#2F5BEA;--hero-ink:#FFFFFF;--flesh:#93A8F4;--yolk:#FFC857;--pit:#64748B;--warn:#C2410C;--warn-soft:#FDEBE1;--good:#15803D;--p:#2F5BEA;--c:#93A8F4;--f:#64748B;--maint:#0E7490;--maint-soft:#DFF3F7;--cam-bg:#2F5BEA;--display:"Inter",system-ui,sans-serif;color-scheme:light}
+html[data-theme="plum"]{--bg:#FFF4EC;--card:#FFFFFF;--ink:#2B1626;--muted:#6E5566;--line:#F0DFD6;--soft:#F7E8EF;--accent:#5B2A4E;--accent-ink:#FFF4EC;--accent-soft:#F3E6EE;--hero:#5B2A4E;--hero-ink:#FFF4EC;--flesh:#F4A582;--yolk:#F4A582;--pit:#6E5566;--warn:#B3261E;--warn-soft:#F9DEDA;--good:#2F7A45;--p:#F4A582;--c:#C98BB5;--f:#5B2A4E;--maint:#2A6F83;--maint-soft:#DCEBEF;--cam-bg:#5B2A4E;--display:"Outfit",system-ui,sans-serif;color-scheme:light}
+html[data-theme="yellow"]{--bg:#FFD400;--card:#FFFFFF;--ink:#111111;--muted:#3D3A2E;--line:#111111;--soft:#FFF1A6;--accent:#111111;--accent-ink:#FFD400;--accent-soft:#FFF1A6;--hero:#111111;--hero-ink:#FFD400;--flesh:#FFD400;--yolk:#FFD400;--pit:#3D3A2E;--warn:#B3261E;--warn-soft:#FBDAD5;--good:#1F6B35;--p:#111111;--c:#8A7400;--f:#5A5A5A;--maint:#0E5A6E;--maint-soft:#E6F2F5;--cam-bg:#111111;--cam-ink:#FFD400;--display:"Archivo",system-ui,sans-serif;color-scheme:light}
+html[data-theme] .chip.goal,html[data-theme] .chip.streak,html[data-theme] .st.warn{background:var(--accent-soft);color:var(--accent)}
+html[data-theme] nav.tabs .cam{color:var(--ink)}
+html[data-theme] nav.tabs .cam .camb{background:var(--cam-bg);color:var(--cam-ink);box-shadow:0 10px 22px -8px rgba(0,0,0,.4)}
+html[data-theme] nav.tabs .cam .camb svg *{stroke:currentColor}
+html[data-theme] nav.tabs .cam .camb svg circle[fill]:not([fill="none"]){fill:var(--cam-bg)}
+html[data-theme] .hero .journey .track>i{background:var(--yolk)}
+html[data-theme] .btn.ezbtn{box-shadow:none}
+html[data-theme] .sheet-bg{background:rgba(0,0,0,.5)}
+html[data-theme="midnight"] .chip.goal,html[data-theme="midnight"] .chip.streak{background:var(--soft);color:var(--accent)}
+
+/* Big "calories left" number used by the Clean and Bold designs in place of the ring */
+.bignum{display:flex;flex-direction:column;gap:2px}
+.bignum b{font-family:var(--display);font-size:64px;font-weight:800;letter-spacing:-.04em;line-height:1;color:var(--accent)}
+.bignum b.over{color:var(--warn)}
+.bignum span{font-size:13px;color:var(--muted);font-weight:600}
+
+/* Ring focus: the calorie ring is the hero */
+html[data-layout="focus"] .leftcard .ringwrap{flex-direction:column;gap:18px}
+html[data-layout="focus"] .leftcard .plate{width:220px;height:220px}
+html[data-layout="focus"] .leftcard .ringc .lbl b{font-size:46px}
+html[data-layout="focus"] .leftcard .ringc .lbl span{font-size:13px}
+html[data-layout="focus"] .leftcard .bars{width:100%}
+html[data-layout="focus"] .hero .art,html[data-layout="focus"] .hero .journey{display:none}
+html[data-layout="focus"] .hero .big{font-size:38px}
+
+/* Clean: flat, light, list-like */
+html[data-layout="clean"] .card{box-shadow:none;border-radius:16px}
+html[data-layout="clean"] .hero{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:16px}
+html[data-layout="clean"] .hero .art{display:none}
+html[data-layout="clean"] .hero .big,html[data-layout="clean"] .hero .big small{color:var(--ink)}
+html[data-layout="clean"] .hero .tiles div{background:var(--soft)}
+html[data-layout="clean"] .hero .journey .track{background:var(--soft)}
+html[data-layout="clean"] .hero .journey .track>i{background:var(--accent)}
+html[data-layout="clean"] .hero .btn{background:var(--accent);color:var(--accent-ink)}
+html[data-layout="clean"] .hero .btn.ghost,html[data-layout="clean"] .hero .eye{background:var(--soft);color:var(--ink)}
+html[data-layout="clean"] .leftcard .ringwrap{flex-direction:column;align-items:stretch}
+html[data-layout="clean"] .actions .btn{box-shadow:none}
+
+/* Tiles: a grid of rounded tiles */
+html[data-layout="tiles"]{--r:24px;--r-lg:28px}
+.htiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.htile{border-radius:24px;padding:16px;background:var(--card);border:1px solid var(--line);display:flex;flex-direction:column;gap:6px;min-height:118px;text-align:left;font:inherit;color:inherit}
+.htile .k{font-size:13px;font-weight:600;color:var(--muted)}
+.htile .v{font-family:var(--display);font-size:30px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.htile .s{font-size:12px;color:var(--muted)}
+.htile.acc{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.htile.acc .k,.htile.acc .s{color:var(--accent-ink);opacity:.85}
+.htile.yolk{background:var(--yolk);border-color:var(--yolk);color:#2b1d00}
+.htile.yolk .k,.htile.yolk .s{color:#2b1d00;opacity:.8}
+.htile .ml{display:flex;justify-content:space-between;font-size:13px}
+.htile .chips{display:flex;flex-wrap:wrap;gap:5px}
+.htile .chips span{padding:3px 9px;border-radius:10px;background:var(--accent-soft);color:var(--accent);font-size:11.5px;font-weight:600}
+
+/* Bold: huge type, thick lines, square corners */
+html[data-layout="bold"]{--r:4px;--r-lg:4px;--r-sm:4px}
+html[data-layout="bold"] .card{border:3px solid var(--ink);box-shadow:none}
+html[data-layout="bold"] h2{text-transform:uppercase;letter-spacing:.04em;font-weight:800}
+html[data-layout="bold"] .bignum b{font-size:96px;color:var(--ink);letter-spacing:-.05em}
+html[data-layout="bold"] .bignum span{text-transform:uppercase;letter-spacing:.08em;color:var(--ink);font-weight:800}
+html[data-layout="bold"] .leftcard .ringwrap{flex-direction:column;align-items:stretch}
+html[data-layout="bold"] .hero .art{display:none}
+html[data-layout="bold"] .actions .btn{border:3px solid var(--ink);box-shadow:none}
+html[data-layout="bold"] .btn.primary{box-shadow:4px 4px 0 var(--ink)}
+
+/* Look picker */
+.lkgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lkopt{border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:18px;padding:10px;text-align:left;cursor:pointer;font:inherit;display:flex;flex-direction:column;gap:8px}
+.lkopt.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.lkopt b{font-size:14px}.lkopt span.d{font-size:11.5px;color:var(--muted);line-height:1.3}
+.lkmini{height:92px;border-radius:12px;background:var(--bg);padding:8px;display:flex;flex-direction:column;gap:5px;overflow:hidden}
+.lkmini i{display:block;border-radius:6px;background:var(--soft)}
+.lkmini i.a{background:var(--accent)} .lkmini i.h{background:var(--hero)} .lkmini i.y{background:var(--yolk)}
+.lkmini .rw{display:flex;gap:5px;flex:1}.lkmini .rw i{flex:1}
+.lkmini .rg{width:44px;height:44px;border-radius:50%;border:7px solid var(--accent);background:transparent;align-self:center}
+.lkmini.sq,.lkmini.sq i{border-radius:2px}
+.lksw{display:flex;align-items:center;gap:10px}
+.lksw .dots{display:flex}
+.lksw .dots i{width:22px;height:22px;border-radius:50%;border:2px solid var(--card);margin-left:-6px;display:block}
+.lksw .dots i:first-child{margin-left:0}
 </style>
 </head>
 <body>
@@ -482,7 +574,7 @@ function defaultState() {
       name: "", sex: "female", age: 35, heightIn: 65, activity: 1.375, units: "lb",
       startWeight: null, goalWeight: null, startDate: null, rate: 1, diet: "balanced",
       custom: { p: 30, c: 40, f: 30 }, carbLimit: null, glp1: { on: false, drug: "wegovy", dose: "", day: 4, freq: "weekly", protein: true, floor: true }, fast: { on: false, plan: "16:8", start: "12:00", hours: 8, days: [1, 4], kcal: null }, maintEvery: 20, maintWeeks: 2, maintAuto: true, manualMode: "auto",
-      ovr: {}, micro: {}, waterGoal: 8, myFoods: [], savedMeals: [], supps: [], measures: [], photos: [], checkins: [], useScaleBmr: false, aiTipAuto: false, hideWeight: false,
+      ovr: {}, micro: {}, waterGoal: 8, myFoods: [], savedMeals: [], supps: [], measures: [], photos: [], checkins: [], useScaleBmr: false, aiTipAuto: false, hideWeight: false, look: { layout: "classic", theme: "" }, lookSeen: false,
       health: { cond: [], condOther: [], meds: [], allergy: [], allergyOther: [], labs: [], notes: "", trackBP: false, trackGlu: false, gluUnit: "mg" }, eatBack: 50, stepGoal: 8000, weekMinGoal: 150, stepsCount: false,
       ai: { provider: "gemini", model: "", endpoint: "" }
     },
@@ -3750,8 +3842,73 @@ document.addEventListener("change", async e => {
   try { addState.img = await prepImage(f); renderAddBody(); runAI("photo"); }
   catch { toast("Couldn't read that image. Try a JPEG or PNG."); }
 });
+/* ================= Look: home design + colors =================
+   Picked on first open (new users after setup; existing testers the next time they open the app),
+   and any time from Settings › Look. Saved in the profile, so it follows the person to every device. */
+const LOOK_LAYOUTS = [
+  { k: "classic", name: "Classic", d: "The original Dietzy home", theme: "", mini: '<i class="h" style="height:34px"></i><div class="rw"><i></i><i></i></div>' },
+  { k: "focus", name: "Ring focus", d: "Big calorie ring first", theme: "midnight", mini: '<span class="rg"></span><div class="rw"><i></i><i></i></div>' },
+  { k: "clean", name: "Clean", d: "Big numbers, simple lists", theme: "cobalt", mini: '<i class="a" style="height:18px;width:60%"></i><i style="height:6px"></i><i style="height:6px"></i><i style="height:6px"></i><i class="a" style="height:14px"></i>' },
+  { k: "tiles", name: "Tiles", d: "A grid of colorful tiles", theme: "plum", mini: '<i class="h" style="height:26px"></i><div class="rw"><i class="y"></i><i></i></div><div class="rw"><i></i><i></i></div>' },
+  { k: "bold", name: "Bold", d: "Huge type, thick lines", theme: "yellow", mini: '<i class="a" style="height:30px;width:80%"></i><div class="rw"><i></i><i></i><i></i></div><i class="h" style="height:18px"></i>' }
+];
+const LOOK_THEMES = [
+  { k: "", name: "Dietzy green", sw: ["#2f6b3c", "#f3b52f", "#f1f5ea"], note: "Follows your phone's dark mode" },
+  { k: "red", name: "Red & Eggshell", sw: ["#B3261E", "#F2B441", "#F0EADC"] },
+  { k: "green", name: "Forest Green & Coral", sw: ["#1F5C46", "#E0644A", "#F0EADC"] },
+  { k: "terracotta", name: "Terracotta & Eggshell", sw: ["#B0472F", "#E9B36A", "#F0EADC"] },
+  { k: "navy", name: "Navy & Tangerine", sw: ["#1E2A44", "#F28C28", "#F0EADC"] },
+  { k: "midnight", name: "Midnight Lime", sw: ["#101214", "#C6F24E", "#1B1E22"], note: "Dark" },
+  { k: "cobalt", name: "Cobalt Clean", sw: ["#2F5BEA", "#93A8F4", "#FFFFFF"] },
+  { k: "plum", name: "Plum & Peach", sw: ["#5B2A4E", "#F4A582", "#FFF4EC"] },
+  { k: "yellow", name: "Black & Yellow", sw: ["#111111", "#FFD400", "#FFFFFF"] }
+];
+const LOOK_FONTS = { midnight: "Sora:wght@400;600;700;800", cobalt: "Inter:wght@400;500;600;700;800", plum: "Outfit:wght@400;500;600;700;800", yellow: "Archivo:wght@500;700;800;900" };
+const lookOf = () => Object.assign({ layout: "classic", theme: "" }, S.profile.look || {});
+const homeLayout = () => LOOK_LAYOUTS.some(l => l.k === lookOf().layout) ? lookOf().layout : "classic";
+function lookName() {
+  const l = lookOf(), L = LOOK_LAYOUTS.find(x => x.k === homeLayout()), T = LOOK_THEMES.find(x => x.k === (l.theme || "")) || LOOK_THEMES[0];
+  return `${L.name} design · ${T.name}`;
+}
+function applyLook() {
+  const l = lookOf(), h = document.documentElement, th = LOOK_THEMES.some(x => x.k === l.theme) ? l.theme : "";
+  if (th) h.dataset.theme = th; else delete h.dataset.theme;
+  h.dataset.layout = homeLayout();
+  const f = LOOK_FONTS[th];
+  if (f && !document.getElementById("lookfont-" + th)) {
+    const ln = document.createElement("link"); ln.rel = "stylesheet"; ln.id = "lookfont-" + th;
+    ln.href = `https://fonts.googleapis.com/css2?family=${f}&display=swap`; document.head.appendChild(ln);
+  }
+  const mc = document.querySelector('meta[name="theme-color"]');
+  if (mc) mc.content = th ? getComputedStyle(h).getPropertyValue("--bg").trim() || "#2f6b3c" : "#2f6b3c";
+}
+function lookPicker(first) {
+  // Seen as soon as it opens, so closing it never brings it back. Settings › Look reopens it.
+  if (!S.profile.lookSeen) { S.profile.lookSeen = true; save(["profile"]); }
+  const body = () => {
+    const l = lookOf(), th = l.theme || "";
+    return `${first ? `<div class="small" style="margin-bottom:12px">Dietzy has new looks. Pick the home screen design and colors that work best for you — you can try them live and change them any time in Settings › Look.</div>` : ""}
+    <h3 style="margin-top:0">Home screen design</h3>
+    <div class="lkgrid">${LOOK_LAYOUTS.map(x => `<button type="button" class="lkopt ${homeLayout() === x.k ? "on" : ""}" data-lk-l="${x.k}" aria-pressed="${homeLayout() === x.k}"><div class="lkmini ${x.k === "bold" ? "sq" : ""}">${x.mini}</div><b>${x.name}</b><span class="d">${x.d}</span></button>`).join("")}</div>
+    <h3>Colors</h3>
+    <div class="lkgrid">${LOOK_THEMES.map(x => `<button type="button" class="lkopt ${th === x.k ? "on" : ""}" data-lk-t="${x.k}" aria-pressed="${th === x.k}"><div class="lksw"><span class="dots">${x.sw.map(c => `<i style="background:${c}"></i>`).join("")}</span></div><b>${x.name}</b>${x.note ? `<span class="d">${x.note}</span>` : ""}</button>`).join("")}</div>
+    <div class="small muted" style="margin-top:10px">Picking a design also picks its matching colors. You can mix and match after that.</div>
+    <button class="btn primary block" style="margin-top:14px" data-act="close-sheet">Done</button>`;
+  };
+  const mount = root => {
+    root.querySelectorAll("[data-lk-l]").forEach(b => b.onclick = () => {
+      const L = LOOK_LAYOUTS.find(x => x.k === b.dataset.lkL);
+      S.profile.look = { layout: L.k, theme: L.theme }; save(["profile"]); render(); root.innerHTML = body(); mount(root);
+    });
+    root.querySelectorAll("[data-lk-t]").forEach(b => b.onclick = () => {
+      S.profile.look = Object.assign(lookOf(), { theme: b.dataset.lkT }); save(["profile"]); render(); root.innerHTML = body(); mount(root);
+    });
+  };
+  openSheet(first ? "🎨 Pick your look" : "🎨 Look", body(), mount);
+}
 function render() {
   resetCalc();
+  applyLook();
   const pc = $("#profChip"); if (pc) { const on = TEST_PROFILES && PROF.list.length > 1; pc.hidden = !on; if (on) pc.textContent = profCur().e; }
   charts.splice(0).forEach(c => { try { c.destroy(); } catch {} });
   renderTabs();
@@ -3762,6 +3919,7 @@ function render() {
     applyFolds(v);
     hydratePhotos(v);
     if (view === "home" && !render._pl) { render._pl = 1; setTimeout(maybePlateau, 900); }
+    if (view === "home" && S.profile.startWeight && !S.profile.lookSeen && !$("#sheetRoot").innerHTML) setTimeout(() => { if (view === "home" && !S.profile.lookSeen && !$("#sheetRoot").innerHTML) lookPicker(true); }, 700);
     if (view === "home" && keepOn() && !S.profile.keep.seen && mode() === "goal" && !$("#sheetRoot").innerHTML) setTimeout(keepWelcome, 500);
     if (view === "home") buddyFromHash();
     if (!render._bud) { render._bud = 1; buddyPush(); }
@@ -3806,12 +3964,14 @@ function viewHome() {
     const next = w - (S.phase.milestone - p.maintEvery);
     phaseLine = `Next maintenance break in ${wShow(Math.max(next, 0))} ${wU()}`;
   }
-  const sug = suggestions(d);
-  return `
+  const sug = suggestions(d), lay = homeLayout(), calLeft = calGoal(d) - tot.cal;
+  const nextBreak = m === "loss" && p.maintAuto && p.maintEvery > 0 && p.manualMode === "auto" ? Math.max(w - (S.phase.milestone - p.maintEvery), 0) : null;
+  const calTop = lay === "clean" || lay === "bold" ? `<div class="bignum"><b class="${calLeft < 0 ? "over" : ""}">${r0(Math.abs(calLeft)).toLocaleString()}</b><span>${calLeft < 0 ? "cal over today" : "cal left today"}</span></div>` : ring(tot.cal, calGoal(d));
+  const greetH = `
   <div class="greet"><div><div class="small muted">${fmtDate(d, { weekday: "long", month: "long", day: "numeric" })}</div><h1><span>${greeting()[0]}</span>${p.name ? `, <span data-notr>${esc(p.name)}</span>` : ""} ${greeting()[1]}</h1></div>
     ${streak() > 1 ? `<span class="chip streak">🔥 ${streak()} days</span>` : ""}</div>
-  ${aiConnected() ? "" : `<div class="note" style="display:flex;align-items:center;gap:10px;margin:0 0 12px"><span style="flex:1">🤖 <b>Connect your AI</b> to scan meal photos and chat with your coach — free with Google Gemini.</span><button class="btn sm" data-act="ai-setup">Set up</button></div>`}
-
+  ${aiConnected() ? "" : `<div class="note" style="display:flex;align-items:center;gap:10px;margin:0 0 12px"><span style="flex:1">🤖 <b>Connect your AI</b> to scan meal photos and chat with your coach — free with Google Gemini.</span><button class="btn sm" data-act="ai-setup">Set up</button></div>`}`;
+  const heroH = `
   <div class="hero">${AVO("art")}
     <div class="lbl">${m === "loss" ? (p.goal === "health" ? "❤️ " : "📉 ") : m === "goal" ? "🏆 " : m === "care" ? "🩺 " : m === "build" ? "💪 " : m === "recomp" ? "🔄 " : m === "keep" ? "⚖️ " : "🧘 "}${MODE_LABEL[m]}</div>
     <div class="big">${lost >= 0 ? "−" : "+"}${wShow(Math.abs(lost))}<small>${wU()} ${lost >= 0 ? "lost" : "gained"}</small></div>
@@ -3823,23 +3983,41 @@ function viewHome() {
     ${trendChange(7) != null && sortedWeights().length > 2 ? `<div class="trendln">📈 ${hideW ? "" : `Trend ${wShow(trendW())} ${wU()} · `}${trendChange(7) <= 0 ? "▼" : "▲"} ${wShow(Math.abs(trendChange(7)))} ${wU()} this week</div>` : ""}
     ${p.goalWeight ? `<div class="journey"><div class="track"><i style="width:${progPct}%"></i></div><div class="ends"><span>${hideW ? "Start" : "Start " + wShow(p.startWeight)}</span><span>${r0(progPct)}% there</span><span>🎯 ${hideW ? "Goal" : wShow(p.goalWeight)}</span></div></div>` : ""}
     <div class="row between" style="margin-top:12px"><div class="phase" style="margin:0">${phaseLine}</div><button class="btn ghost sm eye" data-act="hide-w" aria-label="${hideW ? "Show my weight" : "Hide my weight"}" title="${hideW ? "Show my weight" : "Hide my weight"}">${hideW ? "🙈" : "👁️"}</button><button class="btn ${loggedToday ? "ghost" : ""} sm" style="flex:none" data-act="log-weight">${loggedToday ? "Update weight" : "⚖️ Weigh in"}</button></div>
-  </div>
-
+  </div>`;
+  const extrasH = `
   ${scaleJumpCard(d)}
   ${keepCard()}
   ${checkinCard()}
   ${fastCard()}
-  ${g1Card()}
-  <div class="card">
+  ${g1Card()}`;
+  const leftH = `
+  <div class="card leftcard">
     <div class="row between" style="margin-bottom:10px"><h2 style="margin:0">🍽️ Left for today</h2><span class="small muted">${r0(tot.cal)} of ${calGoal(d)} cal${bonus(d) ? ` <b style="color:var(--accent)">(+${bonus(d)} active)</b>` : ` · ${DIET_E[p.diet] || ""} ${dietOf().name}`}</span></div>
-    <div class="ringwrap">${ring(tot.cal, calGoal(d))}
+    <div class="ringwrap">${calTop}
       <div class="bars">${bar(S.profile.qProtein ? "🥩 Protein (quality)" : "🥩 Protein", tot.p, t.p, "g", "p")}${bar(t.net ? "🍞 Net carbs" : "🍞 Carbs", t.net ? Math.max(tot.c - tot.fib, 0) : tot.c, t.c, "g", "c")}${bar("🥑 Fat", tot.f, t.f, "g", "f")}</div>
-    </div>
+    </div>`;
+  const leftRest = `
     <div class="grid2" style="margin-top:14px">${bar("🌾 Fiber", tot.fib, t.fib, "g", "")}${bar("🧂 Sodium", tot.na, t.na, "mg", "", true)}</div>
     <div class="row between" style="margin-top:14px"><div><div class="small" style="font-weight:700">Water · ${getDay(d).water || 0} of ${p.waterGoal}</div><div class="water" style="margin-top:6px">${Array.from({ length: p.waterGoal }, (_, i) => `<span class="${i < getDay(d).water ? "on" : ""}">💧</span>`).join("")}</div></div>
     <div class="row"><button class="btn sm" data-act="water" data-n="-1">−</button><button class="btn sm" data-act="water" data-n="1">+ glass</button></div></div>
     ${suppHomeLine(d)}
+  </div>`;
+  const leftCard = leftH + leftRest;
+  // Tiles design: the ring card becomes a grid of tiles; fiber, sodium, water and supplements stay in a small card below.
+  const tilesH = () => {
+    const netC = t.net ? Math.max(tot.c - tot.fib, 0) : tot.c, low = sug.filter(x => !x.warn).map(x => x.title.split(":")[0]).slice(0, 3);
+    return `<div class="htiles">
+    <div class="htile acc"><span class="k">${calLeft < 0 ? "Calories over" : "Calories left"}</span><span class="v">${r0(Math.abs(calLeft)).toLocaleString()}</span><span class="s">${r0(tot.cal)} of ${calGoal(d)} cal</span></div>
+    <div class="htile"><span class="k">Macros left</span><div class="ml"><span>🥩 Protein</span><b>${r0(Math.max(t.p - tot.p, 0))} g</b></div><div class="ml"><span>🍞 ${t.net ? "Net carbs" : "Carbs"}</span><b>${r0(Math.max(t.c - netC, 0))} g</b></div><div class="ml"><span>🥑 Fat</span><b>${r0(Math.max(t.f - tot.f, 0))} g</b></div></div>
+    <div class="htile"><span class="k">${nextBreak != null ? "Maintenance break" : MODE_LABEL[m]}</span>${nextBreak != null ? `<span class="v" style="color:var(--accent)">${wShow(nextBreak)} ${wU()}</span><span class="s">until your break</span>` : `<span class="s">${esc(phaseLine || "")}</span>`}</div>
+    <div class="htile"><span class="k">Still needed today</span>${low.length ? `<div class="chips">${low.map(x => `<span>${esc(x)}</span>`).join("")}</div>` : `<span class="s">You're on track ✅</span>`}</div>
   </div>
+  <div class="card">${leftRest.replace('<div class="grid2" style="margin-top:14px">', '<div class="grid2">')}`;
+  };
+  const top = lay === "tiles" ? heroH + tilesH() + extrasH
+    : lay === "classic" ? heroH + extrasH + leftCard
+    : leftCard + heroH + extrasH;
+  return greetH + top + `
 
   <div class="actions" style="margin-bottom:12px">
     <button class="btn primary" data-act="add-food" data-tab="photo"><span class="e">📸</span>Snap meal</button>
@@ -4055,6 +4233,7 @@ function viewPrefs() {
   return `
   ${accountCard()}
   ${langCard()}
+  <div class="card row between" data-act="look" style="cursor:pointer"><div><h2 style="margin:0">🎨 Look</h2><div class="small muted">${esc(lookName())}</div></div>${ICON.right}</div>
   <div class="card row between" data-act="learn" style="cursor:pointer"><div><h2 style="margin:0">📚 Learn</h2><div class="small muted">PDCAAS, diets compared, macros, ranges and more</div></div>${ICON.right}</div>
   <div class="card row between" data-act="sub" data-v="health" style="cursor:pointer"><div><h2 style="margin:0">🩺 Health &amp; test results</h2><div class="small muted">Conditions, medications, allergies and lab results</div></div>${ICON.right}</div>
   <div class="card"><h2>Profile</h2>
@@ -4663,6 +4842,7 @@ document.addEventListener("click", async e => {
     case "coach": openChat("What should I eat for the rest of today to cover what I'm missing?"); break;
     case "chat": openChat(); break;
     case "tip-ask": openChat("Can you explain today's tip and give me a concrete plan for the rest of the day?"); break;
+    case "look": lookPicker(false); break;
     case "hide-w": S.profile.hideWeight = !S.profile.hideWeight; save(["profile"]); render(); toast(S.profile.hideWeight ? "Weight hidden on the home screen" : "Weight shown on the home screen"); break;
     case "water": { const d = todayStr(), day = dayW(d); day.water = Math.max(0, Math.min(30, (day.water || 0) + num(el.dataset.n))); save([monthKey(d)]); render(); break; }
     case "fdate": { const n = addDays(foodDate, num(el.dataset.n)); if (n <= todayStr()) { foodDate = n; render(); } break; }

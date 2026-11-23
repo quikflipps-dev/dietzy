@@ -1,6 +1,6 @@
 // Dietzy service worker: lets the installed app open quickly and on a weak connection.
 // Only this site's own files are cached. Sign-in, saved data and AI always go to the network.
-const CACHE = "dietzy-v2";
+const CACHE = "dietzy-v3";
 const SHELL = ["./", "index.html", "config.js", "backend.js", "i18n.js", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png"];
 
 self.addEventListener("install", (e) => {
